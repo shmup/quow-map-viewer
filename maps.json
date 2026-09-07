@@ -1,0 +1,527 @@
+{
+  "maps": {
+    "1": {
+      "filename": "am.png",
+      "title": "Ankh-Morpork",
+      "background": 16777215,
+      "width": 1354,
+      "height": 1256
+    },
+    "2": {
+      "filename": "am_assassins.png",
+      "title": "AM Assassins",
+      "background": 16777215,
+      "width": 942,
+      "height": 851
+    },
+    "3": {
+      "filename": "am_buildings.png",
+      "title": "AM Buildings",
+      "background": 16777215,
+      "width": 1529,
+      "height": 472
+    },
+    "4": {
+      "filename": "am_cruets.png",
+      "title": "AM Cruets",
+      "background": 16777215,
+      "width": 460,
+      "height": 383
+    },
+    "5": {
+      "filename": "am_docks.png",
+      "title": "AM Docks",
+      "background": 16777215,
+      "width": 1387,
+      "height": 378
+    },
+    "6": {
+      "filename": "am_guilds.png",
+      "title": "AM Guilds",
+      "background": 16777215,
+      "width": 866,
+      "height": 474
+    },
+    "7": {
+      "filename": "am_isle_gods.png",
+      "title": "AM Isle of Gods",
+      "background": 16777215,
+      "width": 788,
+      "height": 634
+    },
+    "8": {
+      "filename": "am_shades.png",
+      "title": "Shades Maze",
+      "background": 12895428,
+      "width": 403,
+      "height": 358
+    },
+    "9": {
+      "filename": "am_smallgods.png",
+      "title": "Temple of Small Gods",
+      "background": 16777215,
+      "width": 432,
+      "height": 743
+    },
+    "10": {
+      "filename": "am_temples.png",
+      "title": "AM Temples",
+      "background": 16777215,
+      "width": 1051,
+      "height": 495
+    },
+    "11": {
+      "filename": "am_thieves.png",
+      "title": "AM Thieves",
+      "background": 16777215,
+      "width": 600,
+      "height": 720
+    },
+    "12": {
+      "filename": "am_uu.png",
+      "title": "Unseen University",
+      "background": 16777215,
+      "width": 1117,
+      "height": 598
+    },
+    "13": {
+      "filename": "am_warriors.png",
+      "title": "AM Warriors",
+      "background": 16777215,
+      "width": 542,
+      "height": 259
+    },
+    "14": {
+      "filename": "am_watch_house.png",
+      "title": "Pseudopolis Watch House",
+      "background": 16777215,
+      "width": 492,
+      "height": 383
+    },
+    "15": {
+      "filename": "magpyr.png",
+      "title": "Magpyr's Castle",
+      "background": 16777215,
+      "width": 474,
+      "height": 542
+    },
+    "16": {
+      "filename": "bois.png",
+      "title": "Bois",
+      "background": 16777215,
+      "width": 471,
+      "height": 317
+    },
+    "17": {
+      "filename": "bp.png",
+      "title": "Bes Pelargic",
+      "background": 16777215,
+      "width": 1316,
+      "height": 921
+    },
+    "18": {
+      "filename": "bp_buildings.png",
+      "title": "BP Buildings",
+      "background": 16777215,
+      "width": 604,
+      "height": 472
+    },
+    "19": {
+      "filename": "bp_estates.png",
+      "title": "BP Estates",
+      "background": 16777215,
+      "width": 1034,
+      "height": 674
+    },
+    "20": {
+      "filename": "bp_wizards.png",
+      "title": "BP Wizards",
+      "background": 16777215,
+      "width": 412,
+      "height": 769
+    },
+    "21": {
+      "filename": "brown_islands.png",
+      "title": "Brown Islands",
+      "background": 16777215,
+      "width": 252,
+      "height": 256
+    },
+    "22": {
+      "filename": "deaths_domain.png",
+      "title": "Death's Domain",
+      "background": 16777215,
+      "width": 279,
+      "height": 379
+    },
+    "23": {
+      "filename": "djb.png",
+      "title": "Djelibeybi",
+      "background": 16777215,
+      "width": 949,
+      "height": 652
+    },
+    "24": {
+      "filename": "djb_wizards.png",
+      "title": "IIL - DJB Wizards",
+      "background": 16777215,
+      "width": 426,
+      "height": 433
+    },
+    "25": {
+      "filename": "ephebe.png",
+      "title": "Ephebe",
+      "background": 16777215,
+      "width": 806,
+      "height": 676
+    },
+    "26": {
+      "filename": "ephebe_under.png",
+      "title": "Ephebe Underdocks",
+      "background": 16777215,
+      "width": 482,
+      "height": 387
+    },
+    "27": {
+      "filename": "genua.png",
+      "title": "Genua",
+      "background": 16777215,
+      "width": 839,
+      "height": 560
+    },
+    "28": {
+      "filename": "genua_sewers.png",
+      "title": "Genua Sewers",
+      "background": 16777215,
+      "width": 841,
+      "height": 721
+    },
+    "29": {
+      "filename": "grflx.png",
+      "title": "GRFLX Caves",
+      "background": 16777215,
+      "width": 651,
+      "height": 367
+    },
+    "30": {
+      "filename": "hashishim_caves.png",
+      "title": "Hashishim Caves",
+      "background": 16777215,
+      "width": 578,
+      "height": 590
+    },
+    "31": {
+      "filename": "klatch.png",
+      "title": "Klatch Region",
+      "background": 16777215,
+      "width": 1778,
+      "height": 1485
+    },
+    "32": {
+      "filename": "lancre_castle.png",
+      "title": "Lancre Region",
+      "background": 16777215,
+      "width": 622,
+      "height": 238
+    },
+    "33": {
+      "filename": "mano_rossa.png",
+      "title": "Mano Rossa",
+      "background": 16777215,
+      "width": 508,
+      "height": 634
+    },
+    "34": {
+      "filename": "monks_cool.png",
+      "title": "Monks of Cool",
+      "background": 16777215,
+      "width": 402,
+      "height": 260
+    },
+    "35": {
+      "filename": "netherworld.png",
+      "title": "Netherworld",
+      "background": 16777215,
+      "width": 390,
+      "height": 259
+    },
+    "37": {
+      "filename": "pumpkin_town.png",
+      "title": "Pumpkin Town",
+      "background": 16777215,
+      "width": 681,
+      "height": 406
+    },
+    "38": {
+      "filename": "ramtops.png",
+      "title": "Ramtops Regions",
+      "background": 16777215,
+      "width": 2142,
+      "height": 752
+    },
+    "39": {
+      "filename": "sl.png",
+      "title": "Sto-Lat",
+      "background": 16777215,
+      "width": 621,
+      "height": 458
+    },
+    "40": {
+      "filename": "sl_aoa.png",
+      "title": "Academy of Artificers",
+      "background": 16777215,
+      "width": 410,
+      "height": 385
+    },
+    "41": {
+      "filename": "sl_cabbages.png",
+      "title": "Cabbage Warehouse",
+      "background": 16777215,
+      "width": 341,
+      "height": 360
+    },
+    "42": {
+      "filename": "sl_library.png",
+      "title": "AoA Library",
+      "background": 16777215,
+      "width": 468,
+      "height": 459
+    },
+    "43": {
+      "filename": "sl_sewers.png",
+      "title": "Sto-Lat Sewers",
+      "background": 16777215,
+      "width": 389,
+      "height": 359
+    },
+    "44": {
+      "filename": "sprite_caves.png",
+      "title": "Sprite Caves",
+      "background": 16777215,
+      "width": 243,
+      "height": 322
+    },
+    "45": {
+      "filename": "sto_plains.png",
+      "title": "Sto Plains Region",
+      "background": 16777215,
+      "width": 1492,
+      "height": 1006
+    },
+    "46": {
+      "filename": "uberwald.png",
+      "title": "Uberwald Region",
+      "background": 16777215,
+      "width": 1771,
+      "height": 1356
+    },
+    "47": {
+      "filename": "uu_library_full.png",
+      "title": "UU Library",
+      "background": 16777215,
+      "width": 300,
+      "height": 4850
+    },
+    "48": {
+      "filename": "farmsteads.png",
+      "title": "Klatchian Farmsteads",
+      "background": 16777215,
+      "width": 554,
+      "height": 269
+    },
+    "49": {
+      "filename": "ctf_arena.png",
+      "title": "CTF Arena",
+      "background": 16777215,
+      "width": 653,
+      "height": 546
+    },
+    "50": {
+      "filename": "pk_arena.png",
+      "title": "PK Arena",
+      "background": 16777215,
+      "width": 313,
+      "height": 445
+    },
+    "51": {
+      "filename": "am_postoffice.png",
+      "title": "AM Post Office",
+      "background": 16777215,
+      "width": 431,
+      "height": 297
+    },
+    "52": {
+      "filename": "bp_ninjas.png",
+      "title": "Ninja Guild",
+      "background": 16777215,
+      "width": 408,
+      "height": 495
+    },
+    "53": {
+      "filename": "tshop.png",
+      "title": "The Travelling Shop",
+      "background": 16777215,
+      "width": 750,
+      "height": 600
+    },
+    "54": {
+      "filename": "slippery_hollow.png",
+      "title": "Slippery Hollow",
+      "background": 16777215,
+      "width": 404,
+      "height": 254
+    },
+    "55": {
+      "filename": "creel_guild.png",
+      "title": "House of Magic - Creel",
+      "background": 16777215,
+      "width": 348,
+      "height": 148
+    },
+    "56": {
+      "filename": "quow_specials.png",
+      "title": "Special Areas",
+      "background": 16777215,
+      "width": 431,
+      "height": 297
+    },
+    "57": {
+      "filename": "skund_wolftrails.png",
+      "title": "Skund Wolf Trail",
+      "background": 16777215,
+      "width": 781,
+      "height": 611
+    },
+    "58": {
+      "filename": "medina.png",
+      "title": "Medina",
+      "background": 16777215,
+      "width": 311,
+      "height": 249
+    },
+    "59": {
+      "filename": "copperhead.png",
+      "title": "Copperhead",
+      "background": 16777215,
+      "width": 240,
+      "height": 130
+    },
+    "60": {
+      "filename": "ephebe_citadel.png",
+      "title": "The Citadel",
+      "background": 16777215,
+      "width": 190,
+      "height": 215
+    },
+    "61": {
+      "filename": "am_fools.png",
+      "title": "AM Fools' Guild",
+      "background": 16777215,
+      "width": 260,
+      "height": 210
+    },
+    "62": {
+      "filename": "thursday.png",
+      "title": "Thursday's Island",
+      "background": 16777215,
+      "width": 223,
+      "height": 135
+    },
+    "63": {
+      "filename": "unsinkable.png",
+      "title": "SS Unsinkable",
+      "background": 16777215,
+      "width": 431,
+      "height": 257
+    },
+    "64": {
+      "filename": "passages.png",
+      "title": "Passage Rooms",
+      "background": 16777215,
+      "width": 159,
+      "height": 98
+    },
+    "99": {
+      "filename": "discwhole.png",
+      "title": "Whole Disc",
+      "background": 0,
+      "width": 5809,
+      "height": 5000
+    }
+  },
+  "regions": {
+    "1": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9,
+      10,
+      11,
+      12,
+      13,
+      14,
+      51,
+      61
+    ],
+    "17": [
+      17,
+      18,
+      19,
+      20,
+      52
+    ],
+    "23": [
+      23,
+      24
+    ],
+    "25": [
+      25,
+      26,
+      60
+    ],
+    "27": [
+      27,
+      28,
+      33
+    ],
+    "31": [
+      31,
+      23,
+      24,
+      25,
+      26,
+      30,
+      48
+    ],
+    "38": [
+      38,
+      32,
+      34,
+      44,
+      54,
+      55,
+      59
+    ],
+    "39": [
+      39,
+      40,
+      41,
+      42,
+      43
+    ],
+    "45": [
+      45,
+      29,
+      39,
+      40,
+      41,
+      42,
+      43
+    ]
+  }
+}
