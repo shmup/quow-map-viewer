@@ -43,6 +43,11 @@
             bottom: 0;
             left: 0;
             overflow: hidden;
+            cursor: grab;
+        }
+
+        #view.panning {
+            cursor: grabbing;
         }
 
         #world {
@@ -54,6 +59,8 @@
             top: 0;
             left: 0;
             image-rendering: pixelated;
+            user-select: none;
+            -webkit-user-drag: none;
         }
 
         #marker {
@@ -196,6 +203,37 @@
             userScale = Math.min(8, Math.max(0.05, scale * (event.deltaY < 0 ? 1.15 : 1 / 1.15)));
             draw(true);
         }, {passive: false});
+
+        let pan = null;
+
+        view.addEventListener("pointerdown", event => {
+            if (event.button !== 0) return;
+            pan = {
+                x: event.clientX,
+                y: event.clientY,
+                left: view.scrollLeft,
+                top: view.scrollTop,
+            };
+            view.setPointerCapture(event.pointerId);
+            view.classList.add("panning");
+            event.preventDefault();
+        });
+
+        view.addEventListener("pointermove", event => {
+            if (!pan) return;
+            view.scrollLeft = pan.left - (event.clientX - pan.x);
+            view.scrollTop = pan.top - (event.clientY - pan.y);
+        });
+
+        const endPan = event => {
+            if (!pan) return;
+            pan = null;
+            view.releasePointerCapture(event.pointerId);
+            view.classList.remove("panning");
+        };
+
+        view.addEventListener("pointerup", endPan);
+        view.addEventListener("pointercancel", endPan);
 
         window.addEventListener("resize", () => draw(true));
         const events = new EventSource("/events");
