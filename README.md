@@ -13,8 +13,18 @@ renders Quow's discworld maps in a browser while updating with player location
 ### REQUIRES
 
 - uv (the shebang runs it) or plain python3 — stdlib only
-- Quow's map pngs and `_quowmap_database.db`, from the MUSHclient plugin
+- Quow's pngs and `_quowmap_database.db` — [MUSHclient.zip](https://www.quow.co.uk/MUSHclient.zip), 16mb
 - something writing `{"room_identifier": "<gmcp hash>"}` to a file
+
+**MAPS**
+
+```sh
+curl -O https://www.quow.co.uk/MUSHclient.zip
+unzip MUSHclient.zip
+export QUOW_MAPS_DIR=$PWD/MUSHclient/quow_plugins/maps
+```
+
+the db lives in that same directory, so one path covers both.
 
 **RUN**
 
@@ -27,12 +37,11 @@ renders Quow's discworld maps in a browser while updating with player location
 
 ```sh
 QUOW_MAPS_DIR=~/Desktop/mush/MUSHclient/quow_plugins/maps
+QUOW_DB_PATH=$QUOW_MAPS_DIR/_quowmap_database.db    # only if you moved it
 DISCWORLD_STORE_PATH=../../store.json
 DISCWORLD_MAP_PATH=../../data/discworld-quow.map    # optional, notes
 DISCWORLD_BOOKMARKS_PATH=../../data/bookmarks.tin   # optional, labels
 ```
-
-db is expected at `../quow/_quowmap_database.db`.
 
 ### ANY CLIENT
 

@@ -19,6 +19,25 @@ from watch import StoreWatcher
 
 ROOT = Path(__file__).parents[2]
 PAGE = Path(__file__).with_name("page.html")
+MAPS_DIR = "~/Desktop/mush/MUSHclient/quow_plugins/maps"
+DATABASE = "_quowmap_database.db"
+
+
+def resolve_paths(environ):
+    """Quow ships the database inside his maps directory; keep them together."""
+    maps_dir = Path(environ.get("QUOW_MAPS_DIR", MAPS_DIR)).expanduser()
+    paths = {
+        "database_path": environ.get("QUOW_DB_PATH", maps_dir / DATABASE),
+        "store_path": environ.get("DISCWORLD_STORE_PATH", ROOT / "store.json"),
+        "map_path": environ.get(
+            "DISCWORLD_MAP_PATH", ROOT / "data" / "discworld-quow.map"
+        ),
+        "bookmarks_path": environ.get(
+            "DISCWORLD_BOOKMARKS_PATH", ROOT / "data" / "bookmarks.tin"
+        ),
+    }
+    resolved = {name: Path(path).expanduser() for name, path in paths.items()}
+    return {"maps_dir": maps_dir, **resolved}
 
 
 class PositionState:
@@ -218,22 +237,7 @@ def main():
     server = create_server(
         (args.bind, args.port),
         maps_path=Path(__file__).with_name("maps.json"),
-        maps_dir=Path(
-            os.environ.get(
-                "QUOW_MAPS_DIR",
-                "~/Desktop/mush/MUSHclient/quow_plugins/maps",
-            )
-        ).expanduser(),
-        database_path=ROOT / "quow" / "_quowmap_database.db",
-        store_path=Path(
-            os.environ.get("DISCWORLD_STORE_PATH", ROOT / "store.json")
-        ).expanduser(),
-        map_path=Path(
-            os.environ.get("DISCWORLD_MAP_PATH", ROOT / "data" / "discworld-quow.map")
-        ).expanduser(),
-        bookmarks_path=Path(
-            os.environ.get("DISCWORLD_BOOKMARKS_PATH", ROOT / "data" / "bookmarks.tin")
-        ).expanduser(),
+        **resolve_paths(os.environ),
     )
     print(f"http://{args.bind}:{server.server_port}", flush=True)
     try:
