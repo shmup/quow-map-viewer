@@ -10,6 +10,15 @@ PAGE = ROOT / "page.html"
 
 
 class PageBehaviourTest(unittest.TestCase):
+    ROOMS = json.dumps(
+        [
+            {"x": 10, "y": 20, "name": "Puns and Pies", "tags": ["Pshop", "tshop-1-filigree"]},
+            {"x": 20, "y": 20, "name": "kitchen", "tags": ["Elm Street"]},
+            {"x": 20, "y": 20, "name": "hall", "tags": ["Elm Street"]},
+            {"x": 30, "y": 40, "name": "Lancre general store"},
+        ]
+    )
+
     def run_javascript(self, expression):
         page = PAGE.read_text(encoding="utf-8")
         match = re.search(r"// fit-start\n(.*?)// fit-end", page, re.DOTALL)
@@ -33,6 +42,34 @@ class PageBehaviourTest(unittest.TestCase):
         self.assertEqual(
             self.run_javascript("viewport(400, 300, 1000, 800, 500, 400, 1)"),
             {"left": 300, "top": 250},
+        )
+
+    def test_search_finds_names_and_tags_case_insensitively(self):
+        self.assertEqual(
+            self.run_javascript(f"matches({self.ROOMS}, 'PSHOP').map(p => p.x)"),
+            [10],
+        )
+        self.assertEqual(
+            self.run_javascript(f"matches({self.ROOMS}, 'general').map(p => p.x)"),
+            [30],
+        )
+
+    def test_search_without_a_query_finds_nothing(self):
+        self.assertEqual(self.run_javascript(f"matches({self.ROOMS}, '  ')"), [])
+
+    def test_search_groups_rooms_that_share_a_point(self):
+        points = self.run_javascript(f"matches({self.ROOMS}, 'street')")
+        self.assertEqual(len(points), 1)
+        self.assertEqual([room["name"] for room in points[0]["rooms"]], ["kitchen", "hall"])
+
+    def test_point_label_names_the_tags_and_the_rooms_behind_it(self):
+        self.assertEqual(
+            self.run_javascript(f"pointLabel(matches({self.ROOMS}, 'pshop')[0])"),
+            "Puns and Pies — Pshop, tshop-1-filigree",
+        )
+        self.assertEqual(
+            self.run_javascript(f"pointLabel(matches({self.ROOMS}, 'street')[0])"),
+            "kitchen — Elm Street (+1)",
         )
 
     def test_viewport_clamps_at_each_edge(self):

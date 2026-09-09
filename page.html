@@ -22,18 +22,47 @@
         }
 
         #title {
+            display: flex;
             position: fixed;
             z-index: 2;
             top: 0;
             right: 0;
             left: 0;
+            gap: 0.7rem;
+            align-items: center;
             height: 2rem;
             padding: 0.4rem 0.7rem;
-            overflow: hidden;
             color: #eee;
             background: #202020e8;
+        }
+
+        #where {
+            flex: 1;
+            overflow: hidden;
             text-overflow: ellipsis;
             white-space: nowrap;
+        }
+
+        #count {
+            color: #ff8c1a;
+            font-size: 0.8rem;
+            white-space: nowrap;
+        }
+
+        #search {
+            width: 14rem;
+            padding: 0.1rem 0.4rem;
+            border: 1px solid #555;
+            border-radius: 3px;
+            background: #111;
+            color: #eee;
+            font: inherit;
+            font-size: 0.85rem;
+        }
+
+        #search:focus {
+            border-color: #ff8c1a;
+            outline: none;
         }
 
         #view {
@@ -65,12 +94,45 @@
 
         #marker {
             position: absolute;
-            z-index: 1;
+            z-index: 2;
             width: 15px;
             height: 15px;
             border-radius: 50%;
             background: #8b2fd6;
             transform: translate(-50%, -50%);
+        }
+
+        .hit {
+            position: absolute;
+            z-index: 1;
+            width: 21px;
+            height: 21px;
+            border: 2px solid #7a3c00;
+            border-radius: 50%;
+            background: #ff8c1a;
+            transform: translate(-50%, -50%);
+        }
+
+        .hit:hover {
+            z-index: 3;
+        }
+
+        .hit > span {
+            display: none;
+            position: absolute;
+            top: -0.4rem;
+            left: 1.4rem;
+            padding: 0.15rem 0.4rem;
+            border-radius: 3px;
+            color: #eee;
+            background: #202020f0;
+            font-size: 0.8rem;
+            white-space: nowrap;
+            pointer-events: none;
+        }
+
+        .hit:hover > span {
+            display: block;
         }
 
         .crosshair {
@@ -95,12 +157,17 @@
     </style>
 </head>
 <body>
-    <div id="title">Waiting for room data</div>
+    <div id="title">
+        <span id="where">Waiting for room data</span>
+        <span id="count"></span>
+        <input id="search" type="search" placeholder="find rooms — pshop, tshop, stable" autocomplete="off">
+    </div>
     <div id="view">
         <div id="world">
             <img id="map" alt="">
             <div id="crosshair-h" class="crosshair" hidden></div>
             <div id="crosshair-v" class="crosshair" hidden></div>
+            <div id="hits"></div>
             <div id="marker" hidden></div>
         </div>
     </div>
@@ -122,17 +189,45 @@
                 ),
             };
         }
+
+        function matches(rooms, query) {
+            const wanted = query.trim().toLowerCase();
+            if (!wanted) return [];
+
+            const points = new Map();
+            for (const room of rooms) {
+                const haystack = [room.name, ...(room.tags ?? [])].join(" ").toLowerCase();
+                if (!haystack.includes(wanted)) continue;
+                const key = `${room.x},${room.y}`;
+                const point = points.get(key) ?? {x: room.x, y: room.y, rooms: []};
+                point.rooms.push(room);
+                points.set(key, point);
+            }
+            return [...points.values()];
+        }
+
+        function pointLabel(point) {
+            const [first, ...rest] = point.rooms;
+            const tags = first.tags?.length ? ` — ${first.tags.join(", ")}` : "";
+            const more = rest.length ? ` (+${rest.length})` : "";
+            return `${first.name}${tags}${more}`;
+        }
         // fit-end
 
-        const title = document.querySelector("#title");
+        const where = document.querySelector("#where");
         const view = document.querySelector("#view");
         const world = document.querySelector("#world");
         const image = document.querySelector("#map");
         const marker = document.querySelector("#marker");
         const crosshairH = document.querySelector("#crosshair-h");
         const crosshairV = document.querySelector("#crosshair-v");
+        const search = document.querySelector("#search");
+        const count = document.querySelector("#count");
+        const hits = document.querySelector("#hits");
         let current = null;
         let userScale = null;
+        let rooms = [];
+        let found = [];
 
         function draw(recentre) {
             if (!current) return;
@@ -154,6 +249,7 @@
             marker.hidden = false;
             crosshairH.hidden = false;
             crosshairV.hidden = false;
+            placeHits(scale);
 
             if (recentre) {
                 const offset = viewport(
@@ -170,17 +266,51 @@
             }
         }
 
+        function placeHits(scale) {
+            hits.replaceChildren(...found.map(point => {
+                const dot = document.createElement("div");
+                dot.className = "hit";
+                dot.style.left = `${point.x * scale}px`;
+                dot.style.top = `${point.y * scale}px`;
+                const label = document.createElement("span");
+                label.textContent = pointLabel(point);
+                dot.append(label);
+                return dot;
+            }));
+        }
+
+        function runSearch() {
+            found = matches(rooms, search.value);
+            const total = found.reduce((sum, point) => sum + point.rooms.length, 0);
+            count.textContent = search.value.trim() ? `${total} rooms` : "";
+            draw(false);
+        }
+
+        async function loadRooms(mapId) {
+            rooms = [];
+            try {
+                const response = await fetch(`/rooms?map=${mapId}`);
+                if (!response.ok) throw new Error(response.status);
+                rooms = (await response.json()).rooms;
+            } catch (error) {
+                console.debug("could not load rooms", error);
+            }
+            runSearch();
+        }
+
         function update(data) {
             if (!data.known) {
-                title.textContent = current
+                where.textContent = current
                     ? `${current.title} — unknown room (${data.room})`
                     : `Unknown room (${data.room})`;
                 return;
             }
 
+            const changedMap = !current || current.map !== data.map;
             const changedImage = !current || current.image !== data.image;
             current = data;
-            title.textContent = `${data.title} — ${data.room}`;
+            where.textContent = `${data.title} — ${data.room}`;
+            if (changedMap) loadRooms(data.map);
             document.body.style.background = data.bg;
             if (changedImage) {
                 image.onload = () => draw(true);
@@ -235,6 +365,7 @@
         view.addEventListener("pointerup", endPan);
         view.addEventListener("pointercancel", endPan);
 
+        search.addEventListener("input", runSearch);
         window.addEventListener("resize", () => draw(true));
         const events = new EventSource("/events");
         events.onmessage = event => update(JSON.parse(event.data));
