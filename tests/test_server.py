@@ -12,7 +12,7 @@ from pathlib import Path
 ROOT = Path(__file__).parents[1]
 sys.path.insert(0, str(ROOT))
 
-from serve import create_server, resolve_paths
+from serve import create_server, read_env, resolve_paths
 
 
 class ServerTest(unittest.TestCase):
@@ -169,7 +169,40 @@ class ServerTest(unittest.TestCase):
         self.assertNotIn("x", unknown)
 
 
+class EnvFileTest(unittest.TestCase):
+    def setUp(self):
+        self.directory = tempfile.TemporaryDirectory()
+        self.env = Path(self.directory.name) / ".env"
+        self.addCleanup(self.directory.cleanup)
+
+    def test_reads_assignments_and_ignores_the_rest(self):
+        self.env.write_text(
+            "# where the pngs live\n"
+            "\n"
+            "QUOW_MAPS_DIR=~/mush/quow_plugins/maps\n"
+            'QUOW_DB_PATH="/opt/quow.db"\n'
+            "  DISCWORLD_STORE_PATH = ../store.json  \n"
+            "nonsense\n",
+            encoding="utf-8",
+        )
+        self.assertEqual(
+            read_env(self.env),
+            {
+                "QUOW_MAPS_DIR": "~/mush/quow_plugins/maps",
+                "QUOW_DB_PATH": "/opt/quow.db",
+                "DISCWORLD_STORE_PATH": "../store.json",
+            },
+        )
+
+    def test_a_missing_file_is_not_an_error(self):
+        self.assertEqual(read_env(self.env), {})
+
+
 class PathTest(unittest.TestCase):
+    def test_a_maps_directory_is_required(self):
+        with self.assertRaises(KeyError):
+            resolve_paths({})
+
     def test_database_sits_with_the_maps_by_default(self):
         paths = resolve_paths({"QUOW_MAPS_DIR": "/opt/quow_plugins/maps"})
         self.assertEqual(paths["maps_dir"], Path("/opt/quow_plugins/maps"))
@@ -198,11 +231,12 @@ class PathTest(unittest.TestCase):
             },
         )
 
-    def test_an_empty_environment_falls_back_to_the_shipped_layout(self):
-        paths = resolve_paths({})
-        self.assertTrue(paths["maps_dir"].name == "maps")
-        self.assertEqual(paths["database_path"].parent, paths["maps_dir"])
+    def test_the_tintin_paths_fall_back_to_the_parent_project(self):
+        paths = resolve_paths({"QUOW_MAPS_DIR": "/opt/maps"})
         self.assertEqual(paths["store_path"], ROOT.parents[1] / "store.json")
+        self.assertEqual(
+            paths["map_path"], ROOT.parents[1] / "data" / "discworld-quow.map"
+        )
 
 
 if __name__ == "__main__":

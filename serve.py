@@ -19,13 +19,28 @@ from watch import StoreWatcher
 
 ROOT = Path(__file__).parents[2]
 PAGE = Path(__file__).with_name("page.html")
-MAPS_DIR = "~/Desktop/mush/MUSHclient/quow_plugins/maps"
+ENV_FILE = Path(__file__).with_name(".env")
 DATABASE = "_quowmap_database.db"
+
+
+def read_env(path):
+    values = {}
+    try:
+        text = Path(path).read_text(encoding="utf-8")
+    except OSError:
+        return values
+    for line in text.splitlines():
+        line = line.strip()
+        if not line or line.startswith("#") or "=" not in line:
+            continue
+        name, _, value = line.partition("=")
+        values[name.strip()] = value.strip().strip("\"'")
+    return values
 
 
 def resolve_paths(environ):
     """Quow ships the database inside his maps directory; keep them together."""
-    maps_dir = Path(environ.get("QUOW_MAPS_DIR", MAPS_DIR)).expanduser()
+    maps_dir = Path(environ["QUOW_MAPS_DIR"]).expanduser()
     paths = {
         "database_path": environ.get("QUOW_DB_PATH", maps_dir / DATABASE),
         "store_path": environ.get("DISCWORLD_STORE_PATH", ROOT / "store.json"),
@@ -234,10 +249,15 @@ def main():
     parser.add_argument("--port", type=int, default=8765)
     args = parser.parse_args()
 
+    try:
+        paths = resolve_paths({**read_env(ENV_FILE), **os.environ})
+    except KeyError as missing:
+        parser.error(f"{missing.args[0]} is unset — copy .env.example to .env")
+
     server = create_server(
         (args.bind, args.port),
         maps_path=Path(__file__).with_name("maps.json"),
-        **resolve_paths(os.environ),
+        **paths,
     )
     print(f"http://{args.bind}:{server.server_port}", flush=True)
     try:

@@ -16,31 +16,28 @@ renders Quow's discworld maps in a browser while updating with player location
 - Quow's pngs and `_quowmap_database.db` — [MUSHclient.zip](https://www.quow.co.uk/MUSHclient.zip), 16mb
 - something writing `{"room_identifier": "<gmcp hash>"}` to a file
 
-**MAPS**
+**SETUP**
 
 ```sh
 curl -O https://www.quow.co.uk/MUSHclient.zip
 unzip MUSHclient.zip
-export QUOW_MAPS_DIR=$PWD/MUSHclient/quow_plugins/maps
+cp .env.example .env    # point QUOW_MAPS_DIR at MUSHclient/quow_plugins/maps
 ```
 
-the db lives in that same directory, so one path covers both.
+the pngs and the db sit in that one directory, so one path covers both.
+`.env` is read at startup, real environment variables win over it, and the
+rest of `.env.example` is optional — see it for what else you can set.
+
+the pngs, the db and `maps.json` have to come from the same Quow release —
+pixel coords only mean anything against the pngs they were drawn for. the
+committed `maps.json` was extracted from the 2024-01 plugin, so if you unzip
+a newer one, re-run `extract_maps.py` against its `QuowMinimap.xml`.
 
 **RUN**
 
 ```sh
 ./serve.py # http://127.0.0.1:9000
 ./serve.py --bind 0.0.0.0 --port 9000
-```
-
-**PATHS**
-
-```sh
-QUOW_MAPS_DIR=~/Desktop/mush/MUSHclient/quow_plugins/maps
-QUOW_DB_PATH=$QUOW_MAPS_DIR/_quowmap_database.db    # only if you moved it
-DISCWORLD_STORE_PATH=../../store.json
-DISCWORLD_MAP_PATH=../../data/discworld-quow.map    # optional, notes
-DISCWORLD_BOOKMARKS_PATH=../../data/bookmarks.tin   # optional, labels
 ```
 
 ### ANY CLIENT
