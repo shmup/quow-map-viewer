@@ -52,6 +52,14 @@ class RoomsTest(unittest.TestCase):
                 (56, 243, 275, "depths of L-space"),
             )
 
+    def test_lists_every_room_on_a_map(self):
+        with Rooms(self.database) as rooms:
+            self.assertEqual(
+                rooms.on_map(45),
+                [("a" * 40, 1454, 560, "road")],
+            )
+            self.assertEqual(rooms.on_map(1), [])
+
     def test_returns_none_for_unknown_identifier(self):
         with Rooms(self.database) as rooms:
             self.assertIsNone(rooms.locate("unknown"))

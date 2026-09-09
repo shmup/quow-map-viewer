@@ -19,6 +19,19 @@ class Rooms:
         ).fetchone()
         return tuple(row) if row else None
 
+    def on_map(self, map_id):
+        return [
+            tuple(row)
+            for row in self.connection.execute(
+                """
+                SELECT room_id, xpos, ypos, room_short
+                FROM rooms
+                WHERE map_id = ?
+                """,
+                (map_id,),
+            )
+        ]
+
     def close(self):
         self.connection.close()
 

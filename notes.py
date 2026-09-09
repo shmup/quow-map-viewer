@@ -65,14 +65,14 @@ def parse_bookmarks(text):
 def read(path):
     try:
         return Path(path).read_text(encoding="utf-8", errors="replace")
-    except OSError:
+    except (OSError, TypeError):
         return ""
 
 
 def signature(path):
     try:
         status = Path(path).stat()
-    except OSError:
+    except (OSError, TypeError):
         return None
     return status.st_mtime_ns, status.st_size
 

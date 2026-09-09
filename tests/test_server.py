@@ -54,20 +54,37 @@ class ServerTest(unittest.TestCase):
             )
             """
         )
-        connection.execute(
+        connection.executemany(
             "INSERT INTO rooms VALUES (?, ?, ?, ?, ?, ?)",
-            ("room-a", 45, 1454, 560, "road", "outside"),
+            (
+                ("room-a", 45, 1454, 560, "road", "outside"),
+                ("room-b", 45, 1200, 400, "Puns and Pies", "inside"),
+                ("room-c", 56, 243, 275, "depths of L-space", "inside"),
+            ),
         )
         connection.commit()
         connection.close()
         self.store = root / "store.json"
         self.write_store("room-a")
+        self.map_file = root / "discworld-quow.map"
+        self.map_file.write_text(
+            "R {28}{0}{<fac>}{Puns and Pies}{}{}{Ankh-Morpork}{Pshop}"
+            "{inside}{}{1.000}{room-b}\n",
+            encoding="utf-8",
+        )
+        self.bookmarks = root / "bookmarks.tin"
+        self.bookmarks.write_text(
+            "#var bookmarks[1] {{comment}{}{label}{tshop-1-filigree}{vnum}{28}};\n",
+            encoding="utf-8",
+        )
         self.server = create_server(
             ("127.0.0.1", 0),
             maps_path=self.maps_json,
             maps_dir=self.maps_dir,
             database_path=self.database,
             store_path=self.store,
+            map_path=self.map_file,
+            bookmarks_path=self.bookmarks,
             watcher_interval=0.01,
         )
         self.thread = threading.Thread(target=self.server.serve_forever)
@@ -102,6 +119,30 @@ class ServerTest(unittest.TestCase):
         self.assertEqual(raised.exception.code, 404)
         raised.exception.close()
 
+    def test_rooms_lists_one_map_with_its_notes(self):
+        with urllib.request.urlopen(f"{self.url}/rooms?map=45") as response:
+            rooms = json.loads(response.read())["rooms"]
+
+        self.assertEqual(
+            sorted(rooms, key=lambda room: room["name"]),
+            [
+                {
+                    "x": 1200,
+                    "y": 400,
+                    "name": "Puns and Pies",
+                    "tags": ["Pshop", "tshop-1-filigree"],
+                },
+                {"x": 1454, "y": 560, "name": "road"},
+            ],
+        )
+
+    def test_rooms_rejects_a_map_it_cannot_read(self):
+        for query in ("", "?map=", "?map=nine"):
+            with self.assertRaises(urllib.error.HTTPError) as raised:
+                urllib.request.urlopen(f"{self.url}/rooms{query}")
+            self.assertEqual(raised.exception.code, 404)
+            raised.exception.close()
+
     def test_events_send_current_position_then_changes(self):
         with urllib.request.urlopen(f"{self.url}/events", timeout=2) as response:
             current = self.read_event(response)
@@ -116,6 +157,7 @@ class ServerTest(unittest.TestCase):
                     "h": 1006,
                     "bg": "#ffffff",
                     "room": "road",
+                    "map": 45,
                     "known": True,
                 },
             )

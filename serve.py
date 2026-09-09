@@ -9,9 +9,10 @@ import os
 import threading
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
-from urllib.parse import unquote, urlsplit
+from urllib.parse import parse_qs, unquote, urlsplit
 
 from maps import Maps
+from notes import Annotation, Notes
 from rooms import Rooms
 from watch import StoreWatcher
 
@@ -64,23 +65,51 @@ def position_event(room_id, maps, rooms):
         "h": info.height,
         "bg": info.background,
         "room": room,
+        "map": map_id,
         "known": True,
     }
+
+
+def map_rooms(map_id, rooms, notes):
+    annotations = notes.annotations()
+    listing = []
+    for room_id, x, y, short in rooms.on_map(map_id):
+        room = {"x": x, "y": y, "name": short}
+        tags = annotations.get(room_id, Annotation()).tags
+        if tags:
+            room["tags"] = list(tags)
+        listing.append(room)
+    return listing
 
 
 class RequestHandler(BaseHTTPRequestHandler):
     protocol_version = "HTTP/1.1"
 
     def do_GET(self):
-        path = unquote(urlsplit(self.path).path)
+        split = urlsplit(self.path)
+        path = unquote(split.path)
         if path == "/":
             self.send_file(self.server.page, "text/html; charset=utf-8")
         elif path == "/events":
             self.send_events()
+        elif path == "/rooms":
+            self.send_rooms(parse_qs(split.query).get("map", [""])[0])
         elif path.startswith("/maps/"):
             self.send_map(path.removeprefix("/maps/"))
         else:
             self.send_error(404)
+
+    def send_rooms(self, map_id):
+        if not map_id.isdigit():
+            self.send_error(404)
+            return
+        listing = map_rooms(int(map_id), self.server.rooms, self.server.notes)
+        content = json.dumps({"rooms": listing}, separators=(",", ":")).encode("utf-8")
+        self.send_response(200)
+        self.send_header("Content-Type", "application/json")
+        self.send_header("Content-Length", str(len(content)))
+        self.end_headers()
+        self.wfile.write(content)
 
     def send_file(self, path, content_type):
         try:
@@ -149,6 +178,8 @@ def create_server(
     maps_dir,
     database_path,
     store_path,
+    map_path=None,
+    bookmarks_path=None,
     watcher_interval=0.1,
 ):
     maps = Maps(maps_path)
@@ -166,6 +197,7 @@ def create_server(
     server.maps = maps
     server.maps_dir = Path(maps_dir)
     server.rooms = rooms
+    server.notes = Notes(map_path, bookmarks_path)
     server.position = position
     server.watcher_stop = threading.Event()
     server.watcher_thread = threading.Thread(
@@ -195,6 +227,12 @@ def main():
         database_path=ROOT / "quow" / "_quowmap_database.db",
         store_path=Path(
             os.environ.get("DISCWORLD_STORE_PATH", ROOT / "store.json")
+        ).expanduser(),
+        map_path=Path(
+            os.environ.get("DISCWORLD_MAP_PATH", ROOT / "data" / "discworld-quow.map")
+        ).expanduser(),
+        bookmarks_path=Path(
+            os.environ.get("DISCWORLD_BOOKMARKS_PATH", ROOT / "data" / "bookmarks.tin")
         ).expanduser(),
     )
     print(f"http://{args.bind}:{server.server_port}", flush=True)
