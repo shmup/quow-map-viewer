@@ -7,7 +7,7 @@ from pathlib import Path
 ROOT = Path(__file__).parents[1]
 sys.path.insert(0, str(ROOT))
 
-from notes import Notes
+from viewer.notes import Notes
 
 
 MAP = """C 4

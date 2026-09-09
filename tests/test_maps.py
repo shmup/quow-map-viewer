@@ -11,7 +11,7 @@ import sys
 sys.path.insert(0, str(ROOT))
 
 from extract_maps import extract_maps
-from maps import Maps
+from viewer.maps import Maps
 
 
 class ExtractMapsTest(unittest.TestCase):

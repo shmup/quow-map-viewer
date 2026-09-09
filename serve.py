@@ -11,14 +11,16 @@ from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
 from urllib.parse import parse_qs, unquote, urlsplit
 
-from maps import Maps
-from notes import Annotation, Notes
-from rooms import Rooms
-from watch import StoreWatcher
+from viewer.maps import Maps
+from viewer.notes import Annotation, Notes
+from viewer.rooms import Rooms
+from viewer.watch import StoreWatcher
 
 
 ROOT = Path(__file__).parents[2]
-PAGE = Path(__file__).with_name("page.html")
+PACKAGE = Path(__file__).with_name("viewer")
+PAGE = PACKAGE / "page.html"
+MAPS = PACKAGE / "maps.json"
 ENV_FILE = Path(__file__).with_name(".env")
 DATABASE = "_quowmap_database.db"
 
@@ -256,7 +258,7 @@ def main():
 
     server = create_server(
         (args.bind, args.port),
-        maps_path=Path(__file__).with_name("maps.json"),
+        maps_path=MAPS,
         **paths,
     )
     print(f"http://{args.bind}:{server.server_port}", flush=True)

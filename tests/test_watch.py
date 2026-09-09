@@ -9,7 +9,7 @@ from pathlib import Path
 ROOT = Path(__file__).parents[1]
 sys.path.insert(0, str(ROOT))
 
-from watch import StoreWatcher
+from viewer.watch import StoreWatcher
 
 
 class StoreWatcherTest(unittest.TestCase):
