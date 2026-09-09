@@ -21,6 +21,7 @@ MAP = re.compile(
 REGIONS_BLOCK = re.compile(r"sRegionLinkGroups\s*=\s*\{(?P<body>.*?)\n\}", re.DOTALL)
 REGION = re.compile(r"\[(?P<id>\d+)\]\s*=\s*\{(?P<body>[^}]*)\}")
 REGION_MAP = re.compile(r"\[(\d+)\]\s*=\s*true")
+OUTPUT = Path(__file__).parents[1] / "viewer" / "maps.json"
 
 
 def extract_maps(source):
@@ -59,7 +60,7 @@ def main():
         "-o",
         "--output",
         type=Path,
-        default=Path(__file__).with_name("maps.json"),
+        default=OUTPUT,
     )
     args = parser.parse_args()
 
