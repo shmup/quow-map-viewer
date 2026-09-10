@@ -95,8 +95,8 @@
         #marker {
             position: absolute;
             z-index: 2;
-            width: 15px;
-            height: 15px;
+            width: 18px;
+            height: 18px;
             border-radius: 50%;
             background: #8b2fd6;
             transform: translate(-50%, -50%);
@@ -105,9 +105,8 @@
         .hit {
             position: absolute;
             z-index: 1;
-            width: 21px;
-            height: 21px;
-            border: 2px solid #7a3c00;
+            width: 18px;
+            height: 18px;
             border-radius: 50%;
             background: #ff8c1a;
             transform: translate(-50%, -50%);
@@ -173,6 +172,8 @@
     </div>
     <script>
         // fit-start
+        const MIN_QUERY = 3;
+
         function fitScale(viewWidth, viewHeight, imageWidth, imageHeight) {
             return Math.max(1, viewWidth / imageWidth, viewHeight / imageHeight);
         }
@@ -190,9 +191,17 @@
             };
         }
 
+        function debounce(work, delay) {
+            let timer = null;
+            return (...args) => {
+                clearTimeout(timer);
+                timer = setTimeout(() => work(...args), delay);
+            };
+        }
+
         function matches(rooms, query) {
             const wanted = query.trim().toLowerCase();
-            if (!wanted) return [];
+            if (wanted.length < MIN_QUERY) return [];
 
             const points = new Map();
             for (const room of rooms) {
@@ -282,7 +291,8 @@
         function runSearch() {
             found = matches(rooms, search.value);
             const total = found.reduce((sum, point) => sum + point.rooms.length, 0);
-            count.textContent = search.value.trim() ? `${total} rooms` : "";
+            const asked = search.value.trim().length >= MIN_QUERY;
+            count.textContent = asked ? `${total} rooms` : "";
             draw(false);
         }
 
@@ -365,7 +375,7 @@
         view.addEventListener("pointerup", endPan);
         view.addEventListener("pointercancel", endPan);
 
-        search.addEventListener("input", runSearch);
+        search.addEventListener("input", debounce(runSearch, 150));
         window.addEventListener("resize", () => draw(true));
         const events = new EventSource("/events");
         events.onmessage = event => update(JSON.parse(event.data));

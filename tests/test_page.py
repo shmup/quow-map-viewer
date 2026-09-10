@@ -57,6 +57,29 @@ class PageBehaviourTest(unittest.TestCase):
     def test_search_without_a_query_finds_nothing(self):
         self.assertEqual(self.run_javascript(f"matches({self.ROOMS}, '  ')"), [])
 
+    def test_search_waits_for_three_characters(self):
+        self.assertEqual(self.run_javascript(f"matches({self.ROOMS}, 'ge')"), [])
+        self.assertEqual(
+            self.run_javascript(f"matches({self.ROOMS}, 'gen').map(p => p.x)"),
+            [30],
+        )
+
+    def test_debounce_runs_once_after_the_typing_stops(self):
+        self.assertEqual(
+            self.run_javascript(
+                "await (async () => {"
+                "  let calls = 0;"
+                "  const bump = debounce(() => calls += 1, 30);"
+                "  bump(); bump(); bump();"
+                "  await new Promise(done => setTimeout(done, 10));"
+                "  const during = calls;"
+                "  await new Promise(done => setTimeout(done, 100));"
+                "  return [during, calls];"
+                "})()"
+            ),
+            [0, 1],
+        )
+
     def test_search_groups_rooms_that_share_a_point(self):
         points = self.run_javascript(f"matches({self.ROOMS}, 'street')")
         self.assertEqual(len(points), 1)
