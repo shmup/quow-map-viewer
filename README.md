@@ -2,6 +2,8 @@
 
 renders Quow's discworld maps in a browser while updating with player location
 
+<img width="1364" height="747" alt="image" src="https://github.com/user-attachments/assets/4def5f5d-046a-4a2f-8b99-a881f1711633" />
+
 ### HOW
 
 - page draws the map png — drag to pan, scroll to zoom, search lights up matching rooms
