@@ -52,7 +52,7 @@
     "8": {
       "filename": "am_shades.png",
       "title": "Shades Maze",
-      "background": 12895428,
+      "background": 16777215,
       "width": 403,
       "height": 358
     },
@@ -441,6 +441,13 @@
       "width": 159,
       "height": 98
     },
+    "65": {
+      "filename": "sto_hedge.png",
+      "title": "Skund Hedge Wizzards",
+      "background": 16777215,
+      "width": 339,
+      "height": 289
+    },
     "99": {
       "filename": "discwhole.png",
       "title": "Whole Disc",
@@ -521,7 +528,8 @@
       40,
       41,
       42,
-      43
+      43,
+      65
     ]
   }
 }

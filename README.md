@@ -32,8 +32,8 @@ rest of `.env.example` is optional — see it for what else you can set.
 
 the pngs, the db and `maps.json` have to come from the same Quow release —
 pixel coords only mean anything against the pngs they were drawn for. the
-committed `maps.json` was extracted from the 2024-01 plugin, so if you unzip
-a newer one, re-run `tools/extract_maps.py` against its `QuowMinimap.xml`.
+committed `maps.json` is from plugin 4.96 (2026-05-17); if yours differs, run
+`tools/extract_maps.py MUSHclient/quow_plugins/QuowMinimap.xml`.
 
 **RUN**
 
