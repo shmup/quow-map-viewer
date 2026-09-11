@@ -57,6 +57,23 @@ class PageBehaviourTest(unittest.TestCase):
             {"left": 3872, "top": 4208, "size": 24},
         )
 
+    def test_zoom_steps_through_quows_levels(self):
+        self.assertEqual(self.run_javascript("stepZoom(1, 1)"), 1.5)
+        self.assertEqual(self.run_javascript("stepZoom(1, -1)"), 0.75)
+        self.assertEqual(self.run_javascript("stepZoom(4, 1)"), 4)
+        self.assertEqual(self.run_javascript("stepZoom(0.5, -1)"), 0.5)
+
+    def test_zoom_snaps_an_arbitrary_fit_scale_to_the_next_level(self):
+        self.assertEqual(self.run_javascript("stepZoom(2.4, 1)"), 3)
+        self.assertEqual(self.run_javascript("stepZoom(2.4, -1)"), 2)
+
+    def test_zoom_keeps_the_map_point_under_the_pointer_still(self):
+        # pointer at (100, 50) in the view, scrolled to (300, 200), map point (400, 250) at 1x
+        self.assertEqual(
+            self.run_javascript("zoomAt(300, 200, 100, 50, 1, 2)"),
+            {"left": 700, "top": 450},
+        )
+
     def test_search_finds_names_and_tags_case_insensitively(self):
         self.assertEqual(
             self.run_javascript(f"matches({self.ROOMS}, 'PSHOP').map(p => p.x)"),
