@@ -95,11 +95,13 @@
         #marker {
             position: absolute;
             z-index: 2;
-            width: 18px;
-            height: 18px;
-            border-radius: 50%;
             background: #8b2fd6;
-            transform: translate(-50%, -50%);
+            /* the ring's hole: a 6x6 pixel square minus its four corner pixels */
+            clip-path: polygon(
+                16.667% 0, 83.333% 0, 83.333% 16.667%, 100% 16.667%,
+                100% 83.333%, 83.333% 83.333%, 83.333% 100%, 16.667% 100%,
+                16.667% 83.333%, 0 83.333%, 0 16.667%, 16.667% 16.667%
+            );
         }
 
         .hit {
@@ -191,6 +193,16 @@
             };
         }
 
+        // the white hole inside one of Quow's room rings is the 6x6 map-pixel
+        // box at x-2..x+3, y-2..y+3, so the room's true centre is (x+1, y+1)
+        function roomBox(x, y, scale) {
+            return {
+                left: (x - 2) * scale,
+                top: (y - 2) * scale,
+                size: 6 * scale,
+            };
+        }
+
         function debounce(work, delay) {
             let timer = null;
             return (...args) => {
@@ -251,10 +263,13 @@
             world.style.height = `${current.h * scale}px`;
             image.style.width = `${current.w * scale}px`;
             image.style.height = `${current.h * scale}px`;
-            marker.style.left = `${current.x * scale}px`;
-            marker.style.top = `${current.y * scale}px`;
-            crosshairH.style.top = `${current.y * scale}px`;
-            crosshairV.style.left = `${current.x * scale}px`;
+            const box = roomBox(current.x, current.y, scale);
+            marker.style.left = `${box.left}px`;
+            marker.style.top = `${box.top}px`;
+            marker.style.width = `${box.size}px`;
+            marker.style.height = `${box.size}px`;
+            crosshairH.style.top = `${(current.y + 1) * scale}px`;
+            crosshairV.style.left = `${(current.x + 1) * scale}px`;
             marker.hidden = false;
             crosshairH.hidden = false;
             crosshairV.hidden = false;

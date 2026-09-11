@@ -44,6 +44,19 @@ class PageBehaviourTest(unittest.TestCase):
             {"left": 300, "top": 250},
         )
 
+    def test_room_box_covers_the_hole_inside_quows_ring(self):
+        # the ring's white interior is pixels x-2..x+3, y-2..y+3
+        self.assertEqual(
+            self.run_javascript("roomBox(970, 1054, 1)"),
+            {"left": 968, "top": 1052, "size": 6},
+        )
+
+    def test_room_box_scales_with_the_map(self):
+        self.assertEqual(
+            self.run_javascript("roomBox(970, 1054, 4)"),
+            {"left": 3872, "top": 4208, "size": 24},
+        )
+
     def test_search_finds_names_and_tags_case_insensitively(self):
         self.assertEqual(
             self.run_javascript(f"matches({self.ROOMS}, 'PSHOP').map(p => p.x)"),
