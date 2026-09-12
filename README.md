@@ -22,11 +22,15 @@ renders Quow's discworld maps in a browser while updating with player location
 
 ```sh
 curl -O https://www.quow.co.uk/MUSHclient.zip
+curl -O http://luggage.gg/dark.zip (optional)
 unzip MUSHclient.zip
 cp .env.example .env    # point QUOW_MAPS_DIR at MUSHclient/quow_plugins/maps
 ```
 
 the pngs and the db sit in that one directory, so one path covers both.
+for dark maps, extract the `dark/` folder from `dark.zip` into `QUOW_MAPS_DIR`.
+the sun/moon button in the title bar switches maps and remembers your choice.
+
 `.env` is read at startup, real environment variables win over it, and the
 rest of `.env.example` is optional — see it for what else you can set.
 

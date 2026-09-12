@@ -66,10 +66,16 @@ class RequestHandler(BaseHTTPRequestHandler):
         self.wfile.write(content)
 
     def send_map(self, name):
+        dark = name.startswith("dark/")
+        if dark:
+            name = name.removeprefix("dark/")
         if name not in self.server.maps.filenames:
             self.send_error(404)
             return
-        self.send_file(self.server.maps_dir / name, "image/png")
+        path = self.server.maps_dir / name
+        if dark and (self.server.maps_dir / "dark" / name).is_file():
+            path = self.server.maps_dir / "dark" / name
+        self.send_file(path, "image/png")
 
     def send_events(self):
         self.send_response(200)

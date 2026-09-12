@@ -35,6 +35,16 @@ class PageBehaviourTest(unittest.TestCase):
     def test_small_map_scales_up_to_cover_window(self):
         self.assertEqual(self.run_javascript("fitScale(800, 600, 240, 130)"), 4.615384615384615)
 
+    def test_map_url_selects_theme_and_encodes_filename(self):
+        self.assertEqual(
+            self.run_javascript("mapUrl('sto plains.png', 'light')"),
+            "/maps/sto%20plains.png",
+        )
+        self.assertEqual(
+            self.run_javascript("mapUrl('sto plains.png', 'dark')"),
+            "/maps/dark/sto%20plains.png",
+        )
+
     def test_large_map_stays_at_native_scale(self):
         self.assertEqual(self.run_javascript("fitScale(800, 600, 1354, 1256)"), 1)
 

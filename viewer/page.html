@@ -22,7 +22,8 @@
         }
 
         #title {
-            display: flex;
+            display: grid;
+            grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
             position: fixed;
             z-index: 2;
             top: 0;
@@ -37,10 +38,26 @@
         }
 
         #where {
-            flex: 1;
             overflow: hidden;
             text-overflow: ellipsis;
             white-space: nowrap;
+        }
+
+        #theme {
+            border: 0;
+            padding: 0 0.3rem;
+            background: transparent;
+            color: inherit;
+            font-size: 1.2rem;
+            cursor: pointer;
+        }
+
+        #search-tools {
+            display: flex;
+            justify-content: flex-end;
+            align-items: center;
+            gap: 0.7rem;
+            min-width: 0;
         }
 
         #count {
@@ -51,6 +68,7 @@
 
         #search {
             width: 14rem;
+            min-width: 0;
             padding: 0.1rem 0.4rem;
             border: 1px solid #555;
             border-radius: 3px;
@@ -142,6 +160,11 @@
             mix-blend-mode: multiply;
         }
 
+        [data-theme="dark"] .crosshair {
+            mix-blend-mode: screen;
+            opacity: 0.4;
+        }
+
         #crosshair-h {
             left: 0;
             width: 100%;
@@ -160,8 +183,11 @@
 <body>
     <div id="title">
         <span id="where">Waiting for room data</span>
-        <span id="count"></span>
-        <input id="search" type="search" placeholder="find rooms — pshop, tshop, stable" autocomplete="off">
+        <button id="theme" type="button" aria-label="switch to dark maps" title="switch to dark maps">☾</button>
+        <div id="search-tools">
+            <span id="count"></span>
+            <input id="search" type="search" placeholder="find rooms — pshop, tshop, stable" autocomplete="off">
+        </div>
     </div>
     <div id="view">
         <div id="world">
@@ -175,6 +201,10 @@
     <script>
         // fit-start
         const MIN_QUERY = 3;
+
+        function mapUrl(filename, theme) {
+            return `/maps/${theme === "dark" ? "dark/" : ""}${encodeURIComponent(filename)}`;
+        }
 
         function fitScale(viewWidth, viewHeight, imageWidth, imageHeight) {
             return Math.max(1, viewWidth / imageWidth, viewHeight / imageHeight);
@@ -263,10 +293,41 @@
         const search = document.querySelector("#search");
         const count = document.querySelector("#count");
         const hits = document.querySelector("#hits");
+        const themeButton = document.querySelector("#theme");
+        let theme = "light";
+        try {
+            if (localStorage.getItem("map-theme") === "dark") theme = "dark";
+        } catch (error) {
+            console.debug("could not read map theme", error);
+        }
         let current = null;
         let userScale = null;
         let rooms = [];
         let found = [];
+
+        function applyTheme() {
+            document.body.dataset.theme = theme;
+            document.body.style.background = theme === "dark" ? "#141b23" : current?.bg ?? "#ffffff";
+            const label = `switch to ${theme === "dark" ? "light" : "dark"} maps`;
+            themeButton.textContent = theme === "dark" ? "☀" : "☾";
+            themeButton.title = label;
+            themeButton.setAttribute("aria-label", label);
+        }
+
+        themeButton.addEventListener("click", () => {
+            theme = theme === "dark" ? "light" : "dark";
+            try {
+                localStorage.setItem("map-theme", theme);
+            } catch (error) {
+                console.debug("could not save map theme", error);
+            }
+            applyTheme();
+            if (current) {
+                image.onload = () => draw(false);
+                image.src = mapUrl(current.image, theme);
+            }
+        });
+        applyTheme();
 
         function draw(recentre) {
             if (!current) return;
@@ -354,10 +415,10 @@
             current = data;
             where.textContent = `${data.title} — ${data.room}`;
             if (changedMap) loadRooms(data.map);
-            document.body.style.background = data.bg;
+            applyTheme();
             if (changedImage) {
                 image.onload = () => draw(true);
-                image.src = `/maps/${encodeURIComponent(data.image)}`;
+                image.src = mapUrl(data.image, theme);
             } else {
                 draw(true);
             }

@@ -119,6 +119,24 @@ class ServerTest(unittest.TestCase):
         self.assertEqual(raised.exception.code, 404)
         raised.exception.close()
 
+    def test_serves_dark_map_and_falls_back_when_missing(self):
+        dark = self.maps_dir / "dark"
+        dark.mkdir()
+        image = dark / "sto_plains.png"
+        image.write_bytes(b"dark fixture png")
+        with urllib.request.urlopen(f"{self.url}/maps/dark/sto_plains.png") as response:
+            self.assertEqual(response.read(), b"dark fixture png")
+        image.unlink()
+        with urllib.request.urlopen(f"{self.url}/maps/dark/sto_plains.png") as response:
+            self.assertEqual(response.read(), b"fixture png")
+
+    def test_dark_map_rejects_unknown_names_and_traversal(self):
+        for name in ("not-listed.png", "../sto_plains.png", "%2E%2E%2Fsto_plains.png"):
+            with self.assertRaises(urllib.error.HTTPError) as raised:
+                urllib.request.urlopen(f"{self.url}/maps/dark/{name}")
+            self.assertEqual(raised.exception.code, 404)
+            raised.exception.close()
+
     def test_rooms_lists_one_map_with_its_notes(self):
         with urllib.request.urlopen(f"{self.url}/rooms?map=45") as response:
             rooms = json.loads(response.read())["rooms"]
